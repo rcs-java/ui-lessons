@@ -1,0 +1,11 @@
+.root {
+    -fx-background-color: #FF5555;
+}
+
+.button {
+    -fx-font: 20px "Comic Sans";
+}
+
+#login-button {
+    -fx-background-color: #FFFFFF;
+}

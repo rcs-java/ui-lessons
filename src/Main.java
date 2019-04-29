@@ -1,18 +1,13 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 public class Main extends Application {
-
-    private TextField username;
-    private TextField password;
     private Stage window;
 
     public static void main(String[] args) {
@@ -22,63 +17,37 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
-        username = new TextField();
-        username.setPromptText("Username");
-        password = new PasswordField();
-        password.setPromptText("Password");
 
-        Button loginButton = new Button("Login");
-        Button registerButton = new Button("Register");
+        TextField username = new TextField();
+        TextField password = new TextField();
+        HBox buttonLayout = new HBox();
 
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(
-            username,
-            password,
-            loginButton,
-            registerButton
-        );
+        vBox.getChildren().addAll(username, password, buttonLayout);
+
+        Button loginButton = new Button("Login");
+        loginButton.setId("login-button");
+        Button registerButton = new Button("Register");
+        buttonLayout.getChildren().addAll(loginButton, registerButton);
+
+        Scene firstScene = new Scene(vBox, 640, 480);
+        firstScene.getStylesheets().add("Styles.css");
+
+        Text secondLabel = new Text("You are logged in!");
+        Button logoutButton = new Button("Log out");
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(secondLabel, logoutButton);
+        Scene otherScene = new Scene(hBox, 320, 240);
 
         loginButton.setOnAction(event -> {
-            login();
+            window.setScene(otherScene);
         });
 
-        registerButton.setOnAction(event -> {
-            register();
+        logoutButton.setOnAction(event -> {
+            window.setScene(firstScene);
         });
 
-        Scene scene = new Scene(vBox, 640, 480);
-        window.setScene(scene);
+        window.setScene(firstScene);
         primaryStage.show();
-    }
-
-    private void login() {
-        String usernameString = username.getText();
-        String passwordString = password.getText();
-
-        try {
-            String successfulUsername = Authenticator.login(usernameString, passwordString);
-            if (successfulUsername == null) {
-                System.out.println("Login failed!");
-            } else {
-                window.close();
-                System.out.println("Welcome back, " + successfulUsername);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void register() {
-        String usernameString = username.getText();
-        String passwordString = password.getText();
-
-        try {
-            String registeredUser = Authenticator.registerUser(usernameString, passwordString);
-            System.out.println("Welcome, " + registeredUser);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (RuntimeException e) {
-            System.out.println("User exists!");
-        }
     }
 }
